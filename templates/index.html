@@ -17,21 +17,38 @@
 <script> 
 
 $(function(){
-                window.setInterval(function(){
-                    loadNewData()
-                }, 5000)
+    
+    document.addEventListener('keydown', function(e) {
+    switch (e.keyCode) {
+        case 37:
+        loadNewData('/left');    
+        alert('left');
+            break;
+        case 38:
+        loadNewData('/up');    
+           alert('up');
+            break;
+        case 39:
+        loadNewData('/right');    
+            alert('right');
+            break;
+        case 40:
+        loadNewData('/down');    
+            alert('down');
+            break;
+    }
+});
             
 
-            function loadNewData(){
+            function loadNewData(route){
                 $.ajax({
-                    url:"/imgandtitle",
+                    url:route,
                     type:"POST",
                     dataType:"json",
                     success: function(data){
-                     console.log(data)
+                     console.log(data.url)
                      //data here is the new json diction. So we use the dot notation to index the values that we want
                        $(imgurl).attr("src", data.url)
-                       $(title).replaceWith(data.title)
                        //console.log(data.url)
                        //console.log(data.title)
                     }
@@ -42,8 +59,7 @@ $(function(){
       
 </script>
 
-        
-        <h2 id=title >{{title}}</h2>
+        <h2>hello</h2>
         <img id=imgurl src={{url}}>
 
 

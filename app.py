@@ -1,30 +1,60 @@
 from flask import Flask, render_template, request, jsonify, redirect
-#import RPi.GPIO as GPIO
 import time
 from random import randint
 import requests
 
+#Make a list of the lattitudes and longitudes
+lat = [0]
+lng = [0]
 
 
 app = Flask(__name__)
 
 #since we are just returning a jsonified dictionary and not a usable html page, we don't need to make an imgandtitle html file
-@app.route('/imgandtitle', methods=['GET', 'POST'])
+@app.route('/left', methods=['GET', 'POST'])
 def apiCall():
   
+  #Get the Last item in the Latitude List and add to it
+    newLat = lat[-1] + 1
+  #Get the most recent longitude
+    longitude = lng[-1]
 
-    value = randint(0, 100)
-    #random photo url could 
-    base_url = f'https://picsum.photos/{value}'
-       
-    #Since we are replacing an attribute all we need to do is get the new url as a string.
-    url = base_url
-    #use full h2 tag since you're replacing the html object with a new one
-    title = f'<h2 id=title >{value}</h2>'
+  #Append the most recent Latitude to the Latitude list so that you can get it on the next call
+    lat.append(newLat)
+
+  #Do the api call with the newLat and return a new image url
+    url = f'{newLat}/{longitude}'
+
 
     Data = {
-        'url': url,
-        'title': title
+        'url': url
+
+    }
+
+    #return your json file
+
+    return jsonify(**Data)   
+
+
+
+
+@app.route('/up', methods=['GET', 'POST'])
+def upCall():
+  
+  #Get the Last item in the Latitude List and add to it
+    newLng = lng[-1] + 1
+
+  #Get the most recent longitude
+    latitude = lat[-1]
+  #Append the most recent Latitude to the Latitude list so that you can get it on the next call
+    lng.append(newLng)
+
+  #Do the api call with the newLat and return a new image url
+    url = f'{latitude}/{newLng}'
+
+
+    Data = {
+        'url': url
 
     }
 
@@ -53,4 +83,4 @@ def index():
     return render_template('index.html', **Data)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=False)
+    app.run(host='0.0.0.0', debug=True)
